@@ -18,7 +18,6 @@ import KeyboardAvoidingView from '../../components/KeyboardAvoidingView'
 const handlePress =  (id:string, bodyText: string): void => {
     if (auth.currentUser === null) { return }
     const ref = doc (db, `users/$(auth.currentUser.uid)/todos`, id)
-    console.log("ref", ref)
     setDoc(ref, {
         bodyText: bodyText,
         updatedAt: Timestamp.fromDate(new Date())
@@ -38,18 +37,17 @@ const Edit = (): JSX.Element => {
     useEffect (() => {
         if (auth.currentUser === null) { return }
         const ref = doc(db, 'users/$(auth.currentUser.uid)/todos', id)
-        console.log("refedit", ref)
         getDoc(ref)
           .then ((docRef) => {
-              console.log('Document data:', docRef.data())
+              console.log('Success', docRef.data())
               const RemoteBodyText = docRef?.data().bodyText
               setBodyText(RemoteBodyText)
-              
             })
           .catch((error) => {
               console.error('Error editing document: ', error)
             })
         }, [])
+        console.log('id@edit_useEffect', id)
     return (
         <KeyboardAvoidingView style={styles.container} >
 
@@ -77,14 +75,16 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         flex: 1,
-        paddingHorizontal: 27,
-        paddingVertical: 32
+        // paddingHorizontal: 27,
+        // paddingVertical: 32
     },
     input: {
         flex: 1,
         fontSize: 16,
         lineHeight: 24,
-        textAlignVertical: 'top'
+        textAlignVertical: 'top',
+        paddingHorizontal: 27,
+        paddingVertical: 32
     }
 })
 
