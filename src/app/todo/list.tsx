@@ -34,8 +34,6 @@ const List = ():JSX.Element => {
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const remoteTodos: Todo[] = []
             snapshot.forEach((doc) => {
-                // console.log('todo', doc.id)
-                // console.log('todo', doc.data())
                 const {bodyText, updatedAt} = doc.data()
                     remoteTodos.push({
                         id: doc.id,

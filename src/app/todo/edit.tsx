@@ -42,11 +42,9 @@ const Edit = (): JSX.Element => {
         getDoc(ref)
           .then ((docRef) => {
               console.log('Document data:', docRef.data())
-              const data = docRef?.data()
-              if (data) {
-                  const RemoteBodyText = data.bodyText
-                  setBodyText(RemoteBodyText)
-              }
+              const RemoteBodyText = docRef?.data().bodyText
+              setBodyText(RemoteBodyText)
+              
             })
           .catch((error) => {
               console.error('Error editing document: ', error)

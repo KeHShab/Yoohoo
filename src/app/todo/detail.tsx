@@ -16,11 +16,12 @@ const handlePress = (id: string): void => {
 const Detail = () :JSX.Element=> {
 
     const id  = String(useLocalSearchParams().id )
+    // console.log("id@detail", id)
     const [todo, setTodo] = useState<Todo | null>(null)
     useEffect (() => {
         if (auth.currentUser === null) { return }
         const ref = doc(db, 'users/$(auth.currentUser.uid)/todos', String(id))
-        console.log("refdetail", ref)
+        // console.log("refdetail", ref)
         const unsubscribe = onSnapshot(ref, (todoDoc) => {
             
             const {bodyText, updatedAt} = todoDoc.data() as Todo
