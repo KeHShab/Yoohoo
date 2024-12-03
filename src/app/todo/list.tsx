@@ -3,75 +3,78 @@ import { router, useNavigation } from 'expo-router'
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
+
+
 import { type Todo } from '../../../types/todo'
 import CircleButton from '../../components/circle_button'
-import LogOut from '../../components/log_out'
+import LogOutButton from '../../components/log_out'
 import TodoListItem from '../../components/todoListItem'
 import { auth, db } from '../../config'
-
-
-
 
 const handlePress = (): void => {
     router.push('/todo/create')
 }
 
-const List = ():JSX.Element => {
+const List = (): JSX.Element => {
     const [todos, setTodos] = useState<Todo[]>([])
     const navigation = useNavigation()
-    useEffect(() => {
+    useEffect (()=> {
         navigation.setOptions({
-            // headerRight: () => { return <Text>Test</Text>}
-            headerRight: () => { return <LogOut/>}
-    })
+            headerRight: () => { return <LogOutButton />}
+        })    
 
-    },[])
-    useEffect(() => {
+    }, [])
+    useEffect (() => {
         if (auth.currentUser === null) { return }
-        const ref = collection(db, 'user/$(auth.currentUser.uid)/todos')
+        const ref = collection(db, 'users/$(auth.currentUser.uid)/todos')
         const q = query(ref, orderBy('updatedAt', 'desc'))
-
+        // const q = query(ref)
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const remoteTodos: Todo[] = []
             snapshot.forEach((doc) => {
+                // console.log('todo', doc.id)
+                // console.log('todo', doc.data())
                 const {bodyText, updatedAt} = doc.data()
-                    remoteTodos.push({
-                        id: doc.id,
-                        bodyText: bodyText,
-                        updatedAt: updatedAt
-                        // bodyText: doc.data().bodyText,
-                        // updatedAt: doc.data().updatedAt.toDate()
-                    })
-                    setTodos(remoteTodos)
+                remoteTodos.push({
+                    id: doc.id,
+                    bodyText: bodyText,
+                    // updatedAt: updatedAt.toDate()
+                    updatedAt: updatedAt
                 })
-
+            })
+            setTodos(remoteTodos)
         })
         return unsubscribe
-    },[])
+    }, [])
+
     return (
- 
+
         <View style={styles.container}>
             <FlatList
                 data={todos}
-                renderItem={({ item }) => <TodoListItem todo ={ item }/>}
+                renderItem={({ item }) => <TodoListItem todo={item} />}  
+        
             />
-                        
+            {/* <View>
+                {todos.map((todo) =>  <TodoListItem todo={todo} /> )}
+             </View>            */}
+  
             <CircleButton onPress={handlePress}>
                 <Feather name='plus' size={40} color="#ffffff" />
             </CircleButton>
                     
         </View>
- 
-    ) 
+
+    )
 }
- 
-const styles = StyleSheet.create({
+
+const styles = StyleSheet.create({ 
     container: {
         flex: 1,
         backgroundColor: '#ffffff'
         // backgroundColor: 'pink'
     },
- 
+
     todoListItem: {
         backgroundColor: '#ffffff',
         flexDirection: 'row',
@@ -81,7 +84,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderBottomWidth: 1,
         borderBottomColor: 'rgba(0, 0, 0, 0.15)'
- 
+
     },
     todoListItemTitle: {
         fontSize: 16,
@@ -114,7 +117,7 @@ const styles = StyleSheet.create({
         lineHeight: 48,
         textAlign: 'center'
     }   
- 
+
 })
- 
+
 export default List

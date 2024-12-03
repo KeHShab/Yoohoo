@@ -10,20 +10,24 @@ import { auth, db } from '../../config'
 // import { ScrollView } from 'react-native-gesture-handler'
 // import { StringLiteralType } from 'typescript'
 
+// const handlePress = (): void => {
+//     router.back()
+// }
 const handlePress = (id: string): void => {
         router.push ({ pathname: '/todo/edit', params: { id }})
-    }
+        console.log('id@toedit', id)}
+
 const Detail = () :JSX.Element=> {
 
     const id  = String(useLocalSearchParams().id )
-    // console.log("id@detail", id)
+    console.log('id@detail', id)
     const [todo, setTodo] = useState<Todo | null>(null)
     useEffect (() => {
         if (auth.currentUser === null) { return }
         const ref = doc(db, 'users/$(auth.currentUser.uid)/todos', String(id))
-        // console.log("refdetail", ref)
         const unsubscribe = onSnapshot(ref, (todoDoc) => {
             
+            console.log(todoDoc.data())
             const {bodyText, updatedAt} = todoDoc.data() as Todo
             setTodo({
                 id: todoDoc.id,
