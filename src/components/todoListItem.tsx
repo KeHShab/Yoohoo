@@ -101,8 +101,8 @@
 
 import { Feather } from '@expo/vector-icons'
 import { Link } from 'expo-router'
-import { doc } from 'firebase/firestore'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { deleteDoc, doc } from 'firebase/firestore'
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { type Todo } from '../../types/todo'
 import { auth, db } from '../config'
 
@@ -111,12 +111,37 @@ interface Props {
     todo: Todo
 }
 const handlePress = (id: string): void => {
-    console.log("id@handle", id)
-    if (auth.currentUser === null) {console.log("Error"); return}
+    // console.log("id@handle", id)
+    if (auth.currentUser === null) {
+        console.log("Error") 
+        return
+    }
+    const ref = doc(db, 'users/$(auth.currentUser.uid)/todos', id)
+    // console.log("uid : ", {id})
+    Alert.alert("Delete", "Are you sure you want to Delete?",[
+        {
+            text:"Cancel",
+            style: "cancel"
+        },
+        {
+            text:"OK",
+            style: 'destructive',
+            onPress: () =>{
+                deleteDoc(ref)
+                .then(() => {
+                    console.log("Successfully Deleted!")
+                    Alert.alert("Task Completed")
+                })
+                .catch((error) => {
+                    console.error("Error: ", error)
+                    Alert.alert("Couldn't Delete: ", error.message)
 
+                })
 
-    const ref = doc(db, 'users/$(auth.curretUser.uid)/TodoListItem',  id)
-    console.log(ref)
+            }
+        }
+
+    ])
 
 }
 
